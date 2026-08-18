@@ -1,0 +1,21 @@
+{
+  "name": "peak-valley-ticker",
+  "version": "0.1.0",
+  "description": "DeepSeek 峰谷计价行情条：按北京时间实时展示高峰「峰」/ 低谷「谷」时段与距结束倒计时，国风股票行情条风格",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ]
+    }
+  },
+  "license": "MIT"
+}

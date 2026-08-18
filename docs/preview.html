@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>peak-valley-ticker 预览</title>
+<style>
+/* __PVT_CSS_START__ */
+.pvt-card{position:fixed;top:16px;left:16px;z-index:2147483000;display:flex;align-items:center;gap:12px;padding:11px 16px 10px 12px;border-radius:14px;background:linear-gradient(150deg,rgba(250,247,239,.97),rgba(242,235,220,.94));border:1px solid rgba(176,142,78,.6);box-shadow:0 10px 30px rgba(80,55,10,.22),inset 0 1px 0 rgba(255,255,255,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-family:'Noto Serif SC','Source Han Serif SC','Songti SC','STSong','SimSun',serif;color:#3b3324;user-select:none;cursor:grab;touch-action:none;pointer-events:auto;animation:pvt-in .45s cubic-bezier(.2,.9,.3,1.15)}
+.pvt-card[data-dragging]{cursor:grabbing;box-shadow:0 14px 34px rgba(80,55,10,.32),inset 0 1px 0 rgba(255,255,255,.7)}
+body[data-ds-dark-theme] .pvt-card[data-dragging]{box-shadow:0 14px 34px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.06)}
+body[data-ds-dark-theme] .pvt-card{background:linear-gradient(150deg,rgba(31,35,41,.93),rgba(21,24,29,.93));border-color:rgba(196,168,106,.5);color:#eae3d3;box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+@keyframes pvt-in{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pvt-card{animation:none}}
+.pvt-goldline{position:absolute;top:0;left:14%;right:14%;height:1.5px;background:linear-gradient(90deg,transparent,rgba(196,168,106,.85),transparent);border-radius:2px}
+.pvt-card::before,.pvt-card::after{content:'';position:absolute;width:12px;height:12px;border:0 solid rgba(176,142,78,.95);pointer-events:none}
+.pvt-card::before{top:6px;left:6px;border-top-width:1.5px;border-left-width:1.5px;border-top-left-radius:4px}
+.pvt-card::after{bottom:6px;right:6px;border-bottom-width:1.5px;border-right-width:1.5px;border-bottom-right-radius:4px}
+.pvt-card[data-state='peak']{border-color:rgba(190,74,50,.62)}
+.pvt-card[data-state='valley']{border-color:rgba(47,150,108,.6)}
+.pvt-seal{position:relative;width:48px;height:48px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Kaiti SC','STKaiti','KaiTi','Noto Serif SC',serif;font-size:27px;font-weight:700;line-height:1}
+.pvt-seal::before,.pvt-seal::after{content:'';position:absolute;border-radius:50%;pointer-events:none}
+.pvt-seal::before{inset:-3px;border:1px solid currentColor;opacity:.9}
+.pvt-seal::after{inset:3px;border:1px solid currentColor;opacity:.45}
+.pvt-card[data-state='peak'] .pvt-seal{color:#b03a2b;background:radial-gradient(circle at 35% 28%,rgba(176,58,43,.34),rgba(176,58,43,.10) 62%,rgba(176,58,43,0) 74%);text-shadow:0 0 14px rgba(176,58,43,.4)}
+.pvt-card[data-state='valley'] .pvt-seal{color:#1f7a58;background:radial-gradient(circle at 35% 28%,rgba(31,122,88,.32),rgba(31,122,88,.10) 62%,rgba(31,122,88,0) 74%);text-shadow:0 0 14px rgba(31,122,88,.4)}
+.pvt-body{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pvt-head{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.14em;opacity:.82}
+.pvt-dot{width:6px;height:6px;border-radius:50%;animation:pvt-blink 1.4s ease-in-out infinite}
+.pvt-card[data-state='peak'] .pvt-dot{background:#d14a33;box-shadow:0 0 8px rgba(209,74,51,.95)}
+.pvt-card[data-state='valley'] .pvt-dot{background:#2fa97c;box-shadow:0 0 8px rgba(47,169,124,.95)}
+@keyframes pvt-blink{0%,100%{opacity:1}50%{opacity:.2}}
+.pvt-tag{border:1px solid currentColor;border-radius:3px;padding:0 5px;font-size:10px;letter-spacing:.2em;opacity:.75;margin-left:2px;white-space:nowrap}
+.pvt-line{display:flex;align-items:baseline;gap:8px;margin-top:1px}
+.pvt-name{font-size:17px;font-weight:700;letter-spacing:.24em}
+.pvt-price{font-size:13px;font-weight:700;font-family:'SF Mono','Cascadia Mono',Consolas,monospace}
+.pvt-arrow{font-size:10px}
+.pvt-badge{font-size:10px;border:1px solid currentColor;border-radius:3px;padding:0 4px;letter-spacing:.12em;font-family:inherit}
+.pvt-card[data-state='peak'] .pvt-price,.pvt-card[data-state='peak'] .pvt-arrow{color:#d14a33}
+.pvt-card[data-state='valley'] .pvt-price,.pvt-card[data-state='valley'] .pvt-arrow{color:#2fa97c}
+.pvt-count{display:flex;align-items:baseline;gap:7px}
+.pvt-label{font-size:11.5px;letter-spacing:.16em;opacity:.72}
+.pvt-digits{font-family:'SF Mono','Cascadia Mono',Consolas,'Liberation Mono',monospace;font-variant-numeric:tabular-nums;font-size:21px;font-weight:700;letter-spacing:.06em;line-height:1}
+.pvt-card[data-state='peak'] .pvt-digits{color:#c0392b}
+.pvt-card[data-state='valley'] .pvt-digits{color:#1f8a63}
+.pvt-next{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:11px;opacity:.8;letter-spacing:.06em}
+.pvt-clock{font-family:'SF Mono','Cascadia Mono',Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:.08em}
+/* __PVT_CSS_END__ */
+</style>
+<style>
+html,body{margin:0;padding:0;height:100%}
+body{font-family:'Noto Serif SC','Source Han Serif SC','Songti SC','STSong','SimSun',serif}
+/* ---- mock DSH web frame (dark default) ---- */
+body{background:#14171c;color:#e8e2d4}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:236px;flex:none;background:#1b1f25;border-right:1px solid #262b33;padding:14px 12px;box-sizing:border-box}
+.side-item{height:10px;border-radius:5px;background:rgba(255,255,255,.07);margin-bottom:12px}
+.side-item.on{background:rgba(255,255,255,.14)}
+.side-note{font-size:11px;color:rgba(232,226,212,.45);letter-spacing:.18em;margin:26px 2px 14px}
+.center{flex:1;min-width:0;display:flex;flex-direction:column;padding:18px 26px;box-sizing:border-box;gap:12px}
+.msg{max-width:72%;height:44px;border-radius:12px;background:rgba(255,255,255,.06)}
+.msg.user{align-self:flex-end;background:rgba(103,137,255,.18)}
+.msg.wide{height:64px}
+.hint{margin:auto 0 8px;text-align:center;font-size:12px;color:rgba(232,226,212,.38);letter-spacing:.3em}
+/* ---- light theme ---- */
+body[data-light] {background:#f5f1e8;color:#3b3324}
+body[data-light] .sidebar{background:#ece6d8;border-right-color:#d8d0bc}
+body[data-light] .side-item{background:rgba(60,50,30,.08)}
+body[data-light] .side-item.on{background:rgba(60,50,30,.16)}
+body[data-light] .msg{background:rgba(60,50,30,.07)}
+body[data-light] .msg.user{background:rgba(103,137,255,.16)}
+body[data-light] .hint{color:rgba(60,50,30,.4)}
+</style>
+</head>
+<body data-ds-dark-theme>
+<div class="app">
+  <div class="sidebar">
+    <div class="side-item on"></div>
+    <div class="side-item"></div>
+    <div class="side-item"></div>
+    <div class="side-note">D E E P S E E K · H A R N E S S</div>
+    <div class="side-item"></div>
+    <div class="side-item"></div>
+  </div>
+  <div class="center">
+    <div class="msg wide"></div>
+    <div class="msg user"></div>
+    <div class="msg wide"></div>
+    <div class="msg"></div>
+    <div class="msg user"></div>
+    <div class="hint">— 预览界面 · 左上角为插件行情条 —</div>
+  </div>
+</div>
+<div id="cards"></div>
+<script>
+  // 与 lib/client.js 渲染结构完全一致；state/theme 通过 query 参数控制
+  var q = new URLSearchParams(location.search);
+  var theme = q.get('theme') || 'dark';
+  var state = q.get('state') || 'both';
+  if (theme === 'light') {
+    document.body.removeAttribute('data-ds-dark-theme');
+    document.body.setAttribute('data-light', '');
+  }
+  function card(kind, opts) {
+    var peak = kind === 'peak';
+    var seal = document.createElement('div');
+    seal.className = 'pvt-seal';
+    seal.textContent = peak ? '峰' : '谷';
+    var head = document.createElement('div');
+    head.className = 'pvt-head';
+    var dot = document.createElement('span');
+    dot.className = 'pvt-dot';
+    var tag = document.createElement('span');
+    tag.className = 'pvt-tag';
+    tag.textContent = '北京时间';
+    head.append(dot, 'DeepSeek · 峰谷计价', tag);
+    var line = document.createElement('div');
+    line.className = 'pvt-line';
+    var name = document.createElement('span');
+    name.className = 'pvt-name';
+    name.textContent = peak ? '高峰时段' : '低谷时段';
+    var price = document.createElement('span');
+    price.className = 'pvt-price';
+    price.textContent = peak ? '×2.00' : '×1.00';
+    var arrow = document.createElement('span');
+    arrow.className = 'pvt-arrow';
+    arrow.textContent = peak ? '▲' : '▼';
+    line.append(name, price, arrow);
+    if (!peak) {
+      var badge = document.createElement('span');
+      badge.className = 'pvt-badge';
+      badge.textContent = '半价';
+      line.append(badge);
+    }
+    var count = document.createElement('div');
+    count.className = 'pvt-count';
+    var label = document.createElement('span');
+    label.className = 'pvt-label';
+    label.textContent = '距结束';
+    var digits = document.createElement('span');
+    digits.className = 'pvt-digits';
+    digits.textContent = opts.digits;
+    count.append(label, digits);
+    var next = document.createElement('div');
+    next.className = 'pvt-next';
+    var nextText = document.createElement('span');
+    nextText.textContent = peak ? '下一时段 谷 · 12:00 起' : '下一时段 峰 · 14:00 起';
+    var clock = document.createElement('span');
+    clock.className = 'pvt-clock';
+    clock.textContent = opts.clock;
+    next.append(nextText, clock);
+    var body = document.createElement('div');
+    body.className = 'pvt-body';
+    body.append(head, line, count, next);
+    var gold = document.createElement('div');
+    gold.className = 'pvt-goldline';
+    var root = document.createElement('div');
+    root.className = 'pvt-card';
+    root.setAttribute('data-state', kind);
+    root.style.top = opts.top + 'px';
+    root.style.left = opts.left + 'px';
+    root.append(gold, seal, body);
+    return root;
+  }
+  var cards = document.getElementById('cards');
+  if (state === 'both') {
+    cards.append(card('peak', { top: 18, left: 18, digits: '01:23:45', clock: '10:36:21' }));
+    cards.append(card('valley', { top: 158, left: 18, digits: '03:05:09', clock: '20:54:51' }));
+  } else if (state === 'valley') {
+    cards.append(card('valley', { top: 18, left: 18, digits: '03:05:09', clock: '20:54:51' }));
+  } else {
+    cards.append(card('peak', { top: 18, left: 18, digits: '01:23:45', clock: '10:36:21' }));
+  }
+</script>
+</body>
+</html>
