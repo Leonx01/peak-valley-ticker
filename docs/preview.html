@@ -44,6 +44,11 @@ body[data-ds-dark-theme] .pvt-card{background:linear-gradient(150deg,rgba(31,35,
 .pvt-card[data-state='valley'] .pvt-digits{color:#1f8a63}
 .pvt-next{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:11px;opacity:.8;letter-spacing:.06em}
 .pvt-clock{font-family:'SF Mono','Cascadia Mono',Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:.08em}
+.pvt-balance{display:flex;align-items:baseline;gap:7px;font-size:11px;letter-spacing:.1em;opacity:.85}
+.pvt-balance-label{opacity:.6;letter-spacing:.16em}
+.pvt-balance-val{font-family:'SF Mono','Cascadia Mono',Consolas,monospace;font-variant-numeric:tabular-nums;font-weight:700;font-size:12.5px;letter-spacing:.04em}
+.pvt-card[data-state='peak'] .pvt-balance-val{color:#c0392b}
+.pvt-card[data-state='valley'] .pvt-balance-val{color:#1f8a63}
 /* __PVT_CSS_END__ */
 </style>
 <style>
@@ -140,6 +145,15 @@ body[data-light] .hint{color:rgba(60,50,30,.4)}
     digits.className = 'pvt-digits';
     digits.textContent = opts.digits;
     count.append(label, digits);
+    var bal = document.createElement('div');
+    bal.className = 'pvt-balance';
+    var balLabel = document.createElement('span');
+    balLabel.className = 'pvt-balance-label';
+    balLabel.textContent = '余额';
+    var balVal = document.createElement('span');
+    balVal.className = 'pvt-balance-val';
+    balVal.textContent = '¥30.71';
+    bal.append(balLabel, balVal);
     var next = document.createElement('div');
     next.className = 'pvt-next';
     var nextText = document.createElement('span');
@@ -150,7 +164,7 @@ body[data-light] .hint{color:rgba(60,50,30,.4)}
     next.append(nextText, clock);
     var body = document.createElement('div');
     body.className = 'pvt-body';
-    body.append(head, line, count, next);
+    body.append(head, line, count, bal, next);
     var gold = document.createElement('div');
     gold.className = 'pvt-goldline';
     var root = document.createElement('div');

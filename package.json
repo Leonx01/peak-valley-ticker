@@ -1,7 +1,7 @@
 {
   "name": "peak-valley-ticker",
-  "version": "0.1.0",
-  "description": "DeepSeek 峰谷计价行情条：按北京时间实时展示高峰「峰」/ 低谷「谷」时段与距结束倒计时，国风股票行情条风格",
+  "version": "0.2.0",
+  "description": "DeepSeek 峰谷计价行情条：按北京时间实时展示高峰「峰」/ 低谷「谷」时段与距结束倒计时，国风股票行情条风格；常驻展示 DeepSeek API 剩余余额",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
